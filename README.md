@@ -68,59 +68,44 @@ Click **Password** in the header (or you are prompted on first login). The new p
 - Need more? Set `VAULT_MAX_MB=10240` (10 GB) or higher — limited only by free disk on the machine/host
 - Footer shows live used / max
 
-## Keep the server running
+## Free public hosting (no payment / no credit card)
+
+**Recommended free path:** run on your PC + **Cloudflare Quick Tunnel**.
+
+- No card, no paid cloud account
+- Works with Express, Socket.io, and the disk vault
+- HTTPS public URL like `https://….trycloudflare.com`
+- Your machine must stay on while the team uses it
+
+```bash
+npm install
+npm run free:start
+```
+
+Or in two terminals:
+
+```bash
+npm run pm2:start
+npm run share
+```
+
+Copy the `https://….trycloudflare.com` URL from the tunnel window and share it with the team.  
+Set `APP_URL` in `.env` to that URL (then `npm run pm2:restart`) so emails/links point at the public address.
 
 | Where | How |
 |-------|-----|
-| **Your PC (dev)** | `npm start` — stops when you close the terminal |
-| **Your PC (always on)** | `npm run pm2:start` (PM2) — restarts if it crashes; machine must stay on |
-| **Cloud (free forever)** | **Oracle Cloud Always Free** VM — see below |
+| **Your PC (dev)** | `npm start` → http://localhost:3847 |
+| **Free + public (no payment)** | `npm run free:start` (PM2 + Cloudflare tunnel) |
+| **Paid / card-required clouds** | Oracle / many “Always Free” VMs ask for a card — skip if you want zero payment |
 
-## Host on Oracle Cloud Always Free (recommended)
+## Other hosts
 
-Closest option to **set-and-forget free forever** for Express + Socket.io + disk vault.
-
-### 1. Create the free VM (Oracle Console)
-
-1. Sign up: [cloud.oracle.com](https://cloud.oracle.com) (Always Free)
-2. **Compute → Instances → Create instance**
-   - Image: **Canonical Ubuntu 22.04**
-   - Shape: **VM.Standard.A1.Flex** (Ampere) — 1–2 OCPU, 6–12 GB RAM (Always Free)
-   - Add your SSH public key
-3. **Networking → VCN → Security List → Ingress rules** — allow:
-   - TCP **22** (SSH)
-   - TCP **80** (HTTP)
-   - TCP **443** (HTTPS, optional later)
-4. Note the instance **Public IP**
-
-### 2. Deploy the app (SSH into the VM)
-
-```bash
-ssh ubuntu@YOUR_PUBLIC_IP
-# If Oracle image uses opc:  ssh opc@YOUR_PUBLIC_IP
-
-git clone https://github.com/vishnuxerago/tracking.git ~/xerago-engineering-dashboard
-cd ~/xerago-engineering-dashboard
-bash deploy/oracle/setup.sh
-```
-
-Open **http://YOUR_PUBLIC_IP**
-
-PM2 keeps the process up across reboots. Nginx proxies port 80 → app `3847` (incl. Socket.io). Vault/DB stay on the VM disk under `data/`.
-
-```bash
-pm2 logs xerago-iot
-nano ~/xerago-engineering-dashboard/.env   # SMTP, APP_URL, JWT_SECRET
-pm2 restart xerago-iot --update-env
-```
-
-## Where else to host
-
-| Platform | Can host this app? |
-|----------|--------------------|
-| **Oracle Always Free** | **Yes** — best free forever fit |
-| **Netlify / Vercel** | **No** — no long-running Express / Socket.io / disk vault |
-| **Render / Railway / Fly** | **Yes** — easy, but free tiers sleep or use credits |
+| Platform | Fit |
+|----------|-----|
+| **Cloudflare Tunnel (this repo)** | **Best free, no payment** |
+| **Netlify / Vercel** | **No** — not for Express + Socket.io + disk vault |
+| **Render / Railway free** | Possible, but sleep / credits; not true forever-free |
+| **Oracle Always Free** | Real VM free tier, but signup usually asks for a payment card |
 
 Env vars: `JWT_SECRET`, `PORT`, `APP_URL`, `SMTP_*` (optional), `VAULT_MAX_MB` (optional).
 

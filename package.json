@@ -9,7 +9,9 @@
     "pm2:start": "npx pm2 start ecosystem.config.cjs",
     "pm2:stop": "npx pm2 stop xerago-iot",
     "pm2:logs": "npx pm2 logs xerago-iot",
-    "pm2:restart": "npx pm2 restart xerago-iot --update-env"
+    "pm2:restart": "npx pm2 restart xerago-iot --update-env",
+    "share": "powershell -ExecutionPolicy Bypass -File deploy/free/share.ps1",
+    "free:start": "powershell -ExecutionPolicy Bypass -File deploy/free/start-all.ps1"
   },
   "engines": {
     "node": ">=18"
