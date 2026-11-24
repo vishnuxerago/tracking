@@ -68,44 +68,38 @@ Click **Password** in the header (or you are prompted on first login). The new p
 - Need more? Set `VAULT_MAX_MB=10240` (10 GB) or higher — limited only by free disk on the machine/host
 - Footer shows live used / max
 
-## Free public hosting (no payment / no credit card)
+## Deploy on Render (cloud)
 
-**Recommended free path:** run on your PC + **Cloudflare Quick Tunnel**.
+1. Push this repo to GitHub (already: `vishnuxerago/tracking`).
+2. Open [Render Blueprints](https://dashboard.render.com/blueprints) → **New Blueprint Instance**.
+3. Connect **vishnuxerago/tracking** → apply `render.yaml`.
+4. Set `APP_URL` to your service URL (e.g. `https://xerago-iot.onrender.com`) after the first deploy.
+5. Optional: fill `SMTP_*` for real email.
 
-- No card, no paid cloud account
-- Works with Express, Socket.io, and the disk vault
-- HTTPS public URL like `https://….trycloudflare.com`
-- Your machine must stay on while the team uses it
+Free plan notes: the service **sleeps after idle**; filesystem is **ephemeral** (vault/DB reset on redeploy unless you add a paid disk).
+
+```bash
+# Or create Web Service manually
+# Build: npm install
+# Start: node server/index.js
+```
+
+## Free on your PC (no cloud account)
 
 ```bash
 npm install
 npm run free:start
 ```
 
-Or in two terminals:
-
-```bash
-npm run pm2:start
-npm run share
-```
-
-Copy the `https://….trycloudflare.com` URL from the tunnel window and share it with the team.  
-Set `APP_URL` in `.env` to that URL (then `npm run pm2:restart`) so emails/links point at the public address.
-
-| Where | How |
-|-------|-----|
-| **Your PC (dev)** | `npm start` → http://localhost:3847 |
-| **Free + public (no payment)** | `npm run free:start` (PM2 + Cloudflare tunnel) |
-| **Paid / card-required clouds** | Oracle / many “Always Free” VMs ask for a card — skip if you want zero payment |
+Gives a `https://….trycloudflare.com` URL while your PC stays on.
 
 ## Other hosts
 
 | Platform | Fit |
 |----------|-----|
-| **Cloudflare Tunnel (this repo)** | **Best free, no payment** |
+| **Render** | Yes — use `render.yaml` (free tier sleeps) |
+| **Cloudflare Tunnel** | Yes — PC must stay on |
 | **Netlify / Vercel** | **No** — not for Express + Socket.io + disk vault |
-| **Render / Railway free** | Possible, but sleep / credits; not true forever-free |
-| **Oracle Always Free** | Real VM free tier, but signup usually asks for a payment card |
 
 Env vars: `JWT_SECRET`, `PORT`, `APP_URL`, `SMTP_*` (optional), `VAULT_MAX_MB` (optional).
 

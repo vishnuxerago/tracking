@@ -1,0 +1,30 @@
+# Render Blueprint — free Web Service
+# Deploy: https://dashboard.render.com/blueprints → New Blueprint Instance → this repo
+services:
+  - type: web
+    name: xerago-iot
+    runtime: node
+    plan: free
+    region: singapore
+    buildCommand: npm install
+    startCommand: node server/index.js
+    healthCheckPath: /
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: JWT_SECRET
+        generateValue: true
+      - key: VAULT_MAX_MB
+        value: "5120"
+      - key: APP_URL
+        sync: false
+      - key: SMTP_HOST
+        sync: false
+      - key: SMTP_PORT
+        sync: false
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASS
+        sync: false
+      - key: SMTP_FROM
+        sync: false
