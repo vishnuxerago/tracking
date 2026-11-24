@@ -1,0 +1,7 @@
+node_modules/
+data/
+data/cloud-vault/
+*.tmp
+.DS_Store
+public/index.html.bak
+.env

@@ -1,0 +1,2184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Xerago IoT — Engineering Command Center</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  
+  <style>
+    /* CSS DESIGN SYSTEM & TOKENS */
+    /* Xerago UI Docs tokens (xone2.xerago.com) — brand green */
+    :root {
+      --brand-green: #249e5e;
+      --brand-green-hover: #1e8550;
+      --brand-green-muted: #249e5e1f;
+      --radius: 0.5rem;
+      --bg-base: #f8fafc;
+      --bg-surface: #ffffff;
+      --bg-card: #ffffff;
+      --bg-card-hover: #f1f5f9;
+      --bg-input: #f1f5f9;
+      --border-color: #e2e8f0;
+      --border-color-light: #f1f5f9;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --text-dim: #94a3b8;
+      --primary: var(--brand-green);
+      --primary-hover: var(--brand-green-hover);
+      --primary-light: var(--brand-green-muted);
+      --accent-cyan: #0891b2;
+      --accent-emerald: #059669;
+      --accent-amber: #d97706;
+      --accent-rose: #e11d48;
+      --accent-purple: #9333ea;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+      --glass: rgba(255, 255, 255, 0.85);
+      --glass-border: rgba(0, 0, 0, 0.06);
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background-color: var(--bg-base);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      line-height: 1.5;
+      overflow-x: hidden;
+    }
+    
+    h1, h2, h3, h4, h5, h6 {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+    
+    code, pre {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    
+    /* LAYOUT STRUCTURE */
+    .app-header {
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border-color);
+      padding: 0.75rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(12px);
+    }
+    
+    .brand-section {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+    }
+    
+    .brand-logo {
+      width: 42px;
+      height: 42px;
+      background: linear-gradient(145deg, #249e5e 0%, #0d9488 55%, #0891b2 100%);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      font-size: 0.95rem;
+      letter-spacing: -0.02em;
+      box-shadow: 0 0 0 3px var(--brand-green-muted), 0 8px 20px rgba(8, 145, 178, 0.25);
+      position: relative;
+    }
+    .brand-logo::after {
+      content: '';
+      position: absolute;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #67e8f9;
+      top: 7px;
+      right: 7px;
+      box-shadow: 0 0 8px #67e8f9;
+    }
+    
+    .brand-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .brand-tag {
+      background: var(--primary-light);
+      color: var(--primary);
+      font-size: 0.7rem;
+      padding: 0.15rem 0.5rem;
+      border-radius: 999px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    
+    /* User Identity Switcher Widget */
+    .user-switcher {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--bg-input);
+      border: 1px solid var(--border-color);
+      padding: 0.35rem 0.75rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: all 0.2s ease;
+    }
+    
+    .user-switcher:hover {
+      border-color: var(--primary);
+    }
+    
+    .user-avatar {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+    
+    .app-container {
+      display: flex;
+      flex: 1;
+    }
+    
+    /* Sidebar Navigation */
+    .sidebar {
+      width: 260px;
+      background: var(--bg-surface);
+      border-right: 1px solid var(--border-color);
+      padding: 1.25rem 0.75rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      flex-shrink: 0;
+    }
+    
+    .nav-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      padding: 0.75rem 0.75rem 0.25rem 0.75rem;
+      letter-spacing: 0.05em;
+    }
+    
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.65rem 0.85rem;
+      color: var(--text-muted);
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 500;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+    
+    .nav-item:hover {
+      background: var(--bg-card-hover);
+      color: var(--text-main);
+    }
+    
+    .nav-item.active {
+      background: var(--primary-light);
+      color: var(--primary);
+      font-weight: 600;
+    }
+    
+    .nav-item svg {
+      width: 18px;
+      height: 18px;
+    }
+    
+    .nav-badge {
+      margin-left: auto;
+      background: var(--bg-input);
+      color: var(--text-muted);
+      font-size: 0.75rem;
+      padding: 0.1rem 0.45rem;
+      border-radius: 999px;
+      font-weight: 600;
+    }
+    
+    .nav-badge.alert {
+      background: var(--accent-rose);
+      color: white;
+    }
+    
+    /* Main Content Canvas */
+    .main-content {
+      flex: 1;
+      padding: 1.5rem 2rem;
+      overflow-y: auto;
+      max-width: 1600px;
+    }
+    
+    /* BUTTONS & UI CONTROLS */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.55rem 1.1rem;
+      border-radius: 8px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
+    
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+      box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
+    }
+    
+    .btn-primary:hover {
+      background: var(--primary-hover);
+    }
+    
+    .btn-secondary {
+      background: var(--bg-card);
+      color: var(--text-main);
+      border-color: var(--border-color);
+    }
+    
+    .btn-secondary:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--text-dim);
+    }
+    
+    .btn-sm {
+      padding: 0.35rem 0.7rem;
+      font-size: 0.8rem;
+    }
+    
+    .btn-icon {
+      padding: 0.4rem;
+      border-radius: 6px;
+    }
+    
+    /* SEARCH & GLOBAL CONTROLS */
+    .search-box {
+      position: relative;
+      width: 300px;
+    }
+    
+    .search-box input {
+      width: 100%;
+      background: var(--bg-input);
+      border: 1px solid var(--border-color);
+      padding: 0.45rem 0.85rem 0.45rem 2.2rem;
+      border-radius: 8px;
+      color: var(--text-main);
+      font-size: 0.85rem;
+      outline: none;
+      transition: border 0.2s;
+    }
+    
+    .search-box input:focus {
+      border-color: var(--primary);
+    }
+    
+    .search-box svg {
+      position: absolute;
+      left: 0.75rem;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 16px;
+      height: 16px;
+      color: var(--text-dim);
+    }
+    
+    /* CARDS & METRIC WIDGETS */
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.25rem;
+      box-shadow: var(--shadow-sm);
+    }
+    
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+    }
+    
+    .card-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    .kpi-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.25rem;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .kpi-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background: var(--kpi-color, var(--primary));
+    }
+    
+    .kpi-title {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      font-weight: 600;
+      letter-spacing: 0.04em;
+    }
+    
+    .kpi-value {
+      font-size: 2rem;
+      font-weight: 800;
+      font-family: 'Outfit', sans-serif;
+      margin: 0.25rem 0;
+      color: var(--text-main);
+    }
+    
+    .kpi-subtext {
+      font-size: 0.78rem;
+      color: var(--text-dim);
+    }
+    
+    /* TABLES & BADGES */
+    .data-table-container {
+      width: 100%;
+      overflow-x: auto;
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+    }
+    
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.875rem;
+    }
+    
+    .data-table th {
+      background: var(--bg-surface);
+      padding: 0.75rem 1rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      border-bottom: 1px solid var(--border-color);
+      white-space: nowrap;
+    }
+    
+    .data-table td {
+      padding: 0.85rem 1rem;
+      border-bottom: 1px solid var(--border-color-light);
+      color: var(--text-main);
+      vertical-align: middle;
+    }
+    
+    .data-table tr:last-child td {
+      border-bottom: none;
+    }
+    
+    .data-table tr:hover td {
+      background: var(--bg-card-hover);
+    }
+    
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      padding: 0.2rem 0.55rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+    
+    .badge-primary { background: var(--primary-light); color: var(--primary); }
+    .badge-success { background: rgba(16, 185, 129, 0.15); color: var(--accent-emerald); }
+    .badge-warning { background: rgba(245, 158, 11, 0.15); color: var(--accent-amber); }
+    .badge-danger { background: rgba(244, 63, 94, 0.15); color: var(--accent-rose); }
+    .badge-cyan { background: rgba(6, 182, 212, 0.15); color: var(--accent-cyan); }
+    .badge-purple { background: rgba(168, 85, 247, 0.15); color: var(--accent-purple); }
+    
+    /* FLOWCHART STAGE PIPELINE */
+    .pipeline-flow-wrap {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 1.25rem 1rem 1.5rem;
+      margin-bottom: 1rem;
+      overflow-x: auto;
+    }
+    .pipeline-progress-bar {
+      height: 8px;
+      background: var(--bg-input);
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 1.25rem;
+    }
+    .pipeline-progress-bar > span {
+      display: block;
+      height: 100%;
+      background: linear-gradient(90deg, #249e5e, #0891b2);
+      border-radius: 999px;
+      transition: width 0.4s ease;
+    }
+    .pipeline-flow {
+      display: flex;
+      align-items: flex-start;
+      gap: 0;
+      min-width: max-content;
+      padding: 0.5rem 0.25rem 0.75rem;
+    }
+    .flow-node {
+      width: 148px;
+      flex-shrink: 0;
+      text-align: center;
+      position: relative;
+    }
+    .flow-node-bubble {
+      width: 72px;
+      height: 72px;
+      margin: 0 auto 0.65rem;
+      border-radius: 18px;
+      border: 2px solid var(--border-color);
+      background: var(--bg-card);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 0.95rem;
+      color: var(--text-main);
+      box-shadow: var(--shadow-sm);
+      transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+      position: relative;
+      z-index: 1;
+    }
+    .flow-node.done .flow-node-bubble {
+      border-color: #249e5e;
+      background: rgba(36, 158, 94, 0.12);
+      color: #249e5e;
+    }
+    .flow-node.active .flow-node-bubble {
+      border-color: #0891b2;
+      background: rgba(8, 145, 178, 0.12);
+      color: #0e7490;
+      box-shadow: 0 0 0 4px rgba(8, 145, 178, 0.15);
+      transform: scale(1.05);
+    }
+    .flow-node.pending .flow-node-bubble {
+      opacity: 0.55;
+    }
+    .flow-node-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--text-main);
+      line-height: 1.25;
+      margin-bottom: 0.25rem;
+    }
+    .flow-node-meta {
+      font-size: 0.68rem;
+      color: var(--text-muted);
+    }
+    .flow-arrow {
+      width: 36px;
+      flex-shrink: 0;
+      height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-dim);
+      position: relative;
+    }
+    .flow-arrow::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 8px;
+      height: 2px;
+      background: linear-gradient(90deg, var(--border-color), #249e5e);
+      top: 50%;
+      transform: translateY(-50%);
+    }
+    .flow-arrow::after {
+      content: '';
+      position: absolute;
+      right: 2px;
+      top: 50%;
+      transform: translateY(-50%);
+      border: 6px solid transparent;
+      border-left-color: #249e5e;
+    }
+    .pipeline-stage-detail {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 0.85rem;
+      margin-top: 0.5rem;
+    }
+    .pipeline-stage-panel {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 0.85rem;
+    }
+    .pipeline-stage-panel h4 {
+      font-size: 0.8rem;
+      margin: 0 0 0.55rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .task-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 0.65rem 0.75rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      margin-bottom: 0.45rem;
+    }
+    .task-card:hover {
+      border-color: var(--primary);
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-md);
+    }
+    .task-title {
+      font-size: 0.82rem;
+      font-weight: 600;
+      margin-bottom: 0.3rem;
+    }
+    .task-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      gap: 0.35rem;
+    }
+
+    /* TRUE KANBAN BOARD */
+    .kanban-board {
+      display: flex;
+      gap: 0.85rem;
+      overflow-x: auto;
+      padding-bottom: 0.75rem;
+      align-items: flex-start;
+    }
+    .kanban-col {
+      min-width: 220px;
+      max-width: 260px;
+      flex: 1;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 0.75rem;
+    }
+    .kanban-col-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.75rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--border-color);
+      font-size: 0.8rem;
+      font-weight: 700;
+    }
+    .kanban-col[data-status="Completed"] .kanban-col-header { border-color: #249e5e; }
+    .kanban-col[data-status="Submitted"] .kanban-col-header { border-color: #f59e0b; }
+    .kanban-col[data-status="In Progress"] .kanban-col-header { border-color: #0891b2; }
+    .kanban-empty {
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      text-align: center;
+      padding: 1rem 0.5rem;
+    }
+
+    .project-network-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 1rem;
+      padding: 0.85rem 1rem;
+      background: var(--bg-surface);
+      border: 1px dashed var(--border-color);
+      border-radius: 12px;
+      align-items: center;
+    }
+    .project-network-links span {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-right: 0.25rem;
+    }
+
+    .maint-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1rem;
+    }
+    .maint-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1rem 1.1rem;
+    }
+    .maint-card h4 { margin: 0 0 0.4rem; font-size: 0.95rem; }
+    .maint-card p { margin: 0; font-size: 0.8rem; color: var(--text-muted); line-height: 1.45; }
+    .maint-card .maint-status {
+      display: inline-block;
+      margin-top: 0.65rem;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+    }
+    .maint-live { color: #249e5e; }
+    .maint-next { color: #d97706; }
+    .maint-later { color: var(--text-dim); }
+
+    .share-menu {
+      position: relative;
+      display: inline-block;
+    }
+    .share-menu-panel {
+      display: none;
+      position: fixed;
+      min-width: 240px;
+      max-width: 280px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.18);
+      z-index: 12000;
+      padding: 0.4rem;
+    }
+    .share-menu.open .share-menu-panel { display: block; }
+    .share-menu-item {
+      display: block;
+      width: 100%;
+      text-align: left;
+      background: transparent;
+      border: none;
+      color: var(--text-main);
+      font-size: 0.8rem;
+      padding: 0.55rem 0.7rem;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .share-menu-item:hover { background: var(--bg-input); }
+    .share-submenu {
+      display: none;
+      margin: 0.15rem 0 0.35rem 0.5rem;
+      padding: 0.35rem;
+      border-left: 2px solid var(--brand-green);
+      max-height: 160px;
+      overflow: auto;
+    }
+    .share-menu-item.has-sub.open + .share-submenu,
+    .share-submenu.open { display: block; }
+    .share-submenu label {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.75rem;
+      padding: 0.25rem 0.35rem;
+      cursor: pointer;
+    }
+    .vault-actions {
+      display: flex;
+      gap: 0.35rem;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      position: relative;
+      overflow: visible;
+    }
+    #vaultByProjectContainer .data-table-container {
+      overflow: visible;
+    }
+    #vaultByProjectContainer .card {
+      overflow: visible;
+    }
+    .due-banner {
+      display: none;
+      margin-bottom: 1rem;
+      padding: 0.75rem 1rem;
+      border-radius: 12px;
+      border: 1px solid rgba(217, 119, 6, 0.35);
+      background: rgba(245, 158, 11, 0.1);
+      font-size: 0.85rem;
+    }
+    .due-banner.show { display: block; }
+    .due-banner.overdue {
+      border-color: rgba(225, 29, 72, 0.35);
+      background: rgba(225, 29, 72, 0.08);
+    }
+    .rev-badge {
+      display: inline-block;
+      font-size: 0.68rem;
+      font-weight: 700;
+      padding: 0.15rem 0.4rem;
+      border-radius: 6px;
+      background: rgba(8, 145, 178, 0.15);
+      color: #0e7490;
+      margin-left: 0.35rem;
+    }
+    
+    /* MODALS & OVERLAYS */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+    
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    
+    .modal {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      width: 90%;
+      max-width: 750px;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 1.75rem;
+      box-shadow: var(--shadow-lg);
+      transform: scale(0.95);
+      transition: transform 0.25s ease;
+    }
+    
+    .modal-overlay.active .modal {
+      transform: scale(1);
+    }
+    
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+    
+    .modal-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+    }
+    
+    .close-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 1.5rem;
+      line-height: 1;
+    }
+    
+    .close-btn:hover {
+      color: var(--text-main);
+    }
+    
+    /* FORM CONTROLS */
+    .form-group {
+      margin-bottom: 1.1rem;
+    }
+    
+    .form-label {
+      display: block;
+      font-size: 0.825rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 0.35rem;
+    }
+    
+    .form-control {
+      width: 100%;
+      background: var(--bg-input);
+      border: 1px solid var(--border-color);
+      padding: 0.6rem 0.85rem;
+      border-radius: 8px;
+      color: var(--text-main);
+      font-size: 0.875rem;
+      outline: none;
+    }
+    
+    .form-control:focus {
+      border-color: var(--primary);
+    }
+    
+    textarea.form-control {
+      min-height: 90px;
+      resize: vertical;
+    }
+    
+    .form-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+    }
+    
+    .checkbox-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 0.5rem;
+      background: var(--bg-input);
+      padding: 0.75rem;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+    }
+    
+    .checkbox-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.825rem;
+      color: var(--text-main);
+    }
+    
+    /* TAB SYSTEM */
+    .tabs-bar {
+      display: flex;
+      gap: 0.5rem;
+      border-bottom: 1px solid var(--border-color);
+      margin-bottom: 1.5rem;
+    }
+    
+    .tab-btn {
+      padding: 0.65rem 1.1rem;
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 0.875rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .tab-btn:hover {
+      color: var(--text-main);
+    }
+    
+    .tab-btn.active {
+      color: var(--primary);
+      border-bottom-color: var(--primary);
+    }
+    
+    /* UTILITY & FOOTER */
+    .app-footer {
+      background: var(--bg-surface);
+      border-top: 1px solid var(--border-color);
+      padding: 0.5rem 1.5rem;
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    
+    .storage-meter {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .meter-bar {
+      width: 100px;
+      height: 6px;
+      background: var(--bg-input);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    
+    .meter-fill {
+      height: 100%;
+      background: var(--accent-cyan);
+      width: 5%;
+      transition: width 0.3s ease;
+    }
+
+    /* Login + live toast */
+    /* xone/login template (xerago-ui-docs) */
+    #loginOverlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: #ffffff;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      color: #1a1a1a;
+    }
+    #loginOverlay.active { display: flex; }
+    .login-card {
+      width: min(400px, 100%);
+      background: #ffffff;
+      border: none;
+      border-radius: var(--radius);
+      padding: 2rem 1.25rem;
+      box-shadow: none;
+      text-align: center;
+    }
+    .login-card .brand-logo {
+      margin: 0 auto 1.25rem;
+      background: var(--brand-green);
+    }
+    .login-card h1 { font-size: 1.75rem; margin-bottom: 0.35rem; color: #1a1a1a; text-align: center; }
+    .login-card .subtitle { color: #828282; font-size: 0.95rem; margin-bottom: 1.5rem; text-align: center; }
+    .login-card .form-label { color: #4f4f4f; text-align: left; display: block; }
+    .login-card .form-control {
+      background: #fff;
+      border: 1px solid #e5e5e5;
+      color: #1a1a1a;
+      border-radius: var(--radius);
+    }
+    .login-card .form-control:focus {
+      border-color: var(--brand-green);
+      outline: 2px solid var(--brand-green-muted);
+    }
+    .login-card .btn-primary {
+      background: var(--brand-green);
+      border-color: var(--brand-green);
+      width: 100%;
+    }
+    .login-card .btn-primary:hover { background: var(--brand-green-hover); }
+    .login-error { color: var(--accent-rose); font-size: 0.85rem; min-height: 1.2em; margin-bottom: 0.75rem; }
+    .quick-logins { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 1rem; }
+    .quick-logins button {
+      font-size: 0.72rem;
+      border: 1px solid var(--border-color);
+      background: var(--bg-input);
+      color: var(--text-muted);
+      border-radius: 6px;
+      padding: 0.35rem 0.55rem;
+      cursor: pointer;
+    }
+    .admin-badge { background: rgba(244, 63, 94, 0.15); color: var(--accent-rose); }
+    .member-badge { background: rgba(6, 182, 212, 0.15); color: var(--accent-cyan); }
+    .live-toast {
+      position: fixed;
+      right: 1.25rem;
+      bottom: 1.25rem;
+      background: var(--bg-card);
+      border: 1px solid var(--accent-cyan);
+      color: var(--text-main);
+      padding: 0.85rem 1.1rem;
+      border-radius: 10px;
+      box-shadow: var(--shadow-lg);
+      z-index: 10000;
+      opacity: 0;
+      transform: translateY(12px);
+      transition: all 0.25s ease;
+      max-width: 360px;
+      pointer-events: none;
+    }
+    .live-toast.show { opacity: 1; transform: translateY(0); }
+    body.logged-out .app-header,
+    body.logged-out .app-container,
+    body.logged-out .app-footer { filter: blur(2px); pointer-events: none; }
+  </style>
+</head>
+<body>
+
+  <!-- LOGIN OVERLAY -->
+  <div id="loginOverlay" class="active">
+    <div class="login-card">
+      <div class="brand-logo" style="margin:0 auto 1.25rem;">IoT</div>
+      <h1>Xerago IoT</h1>
+      <p class="subtitle">IoT engineering command center — AI project plans, live team tasks, and cloud document vault.</p>
+      <form id="loginForm" method="post" action="#" onsubmit="return false;">
+        <div class="form-group">
+          <label class="form-label">Username or email</label>
+          <input class="form-control" id="loginUsername" name="username" required autocomplete="username" placeholder="dinesh or r.dinesh@xerago.com">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input class="form-control" type="password" id="loginPassword" name="password" required autocomplete="current-password" placeholder="admin123 / team123">
+        </div>
+        <div class="login-error" id="loginError"></div>
+        <button type="submit" class="btn btn-primary" style="width:100%;">Sign in</button>
+      </form>
+      <div class="quick-logins">
+        <button type="button" data-quick-login data-user="dinesh" data-pass="admin123">Admin: dinesh</button>
+        <button type="button" data-quick-login data-user="vishnu" data-pass="team123">PCB: vishnu</button>
+        <button type="button" data-quick-login data-user="arun" data-pass="team123">3D: arun</button>
+        <button type="button" data-quick-login data-user="daniel" data-pass="team123">Ops: daniel</button>
+      </div>
+      <p style="margin-top:0.75rem;font-size:0.75rem;color:var(--text-muted);">Use <strong>http://localhost:3847</strong> — not the raw HTML file.</p>
+      <p style="margin-top:1rem;font-size:0.72rem;color:var(--text-dim);">Stack: Node · Express · JWT · Socket.io · Ollama (optional OSS AI)</p>
+    </div>
+  </div>
+
+  <!-- HEADER -->
+  <header class="app-header">
+    <div class="brand-section">
+      <div class="brand-logo" title="Xerago IoT">IoT</div>
+      <div>
+        <div class="brand-title">
+          Xerago IoT
+          <span class="brand-tag" id="accessLevelBadge">TEAM</span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="search-box">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+      <input type="text" id="globalSearchInput" placeholder="Search projects, tasks, vendors, team...">
+    </div>
+    
+    <div class="header-actions">
+      <button type="button" class="btn btn-secondary btn-sm" id="changePasswordBtn" title="Change password — saved in server DB">Password</button>
+      <!-- Click to logout / switch user -->
+      <div class="user-switcher" id="userSwitcherBtn" title="Click to logout">
+        <div class="user-avatar" id="currentUserAvatar">D</div>
+        <span id="currentUserName">Not signed in</span>
+        <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+      </div>
+      
+      <button class="btn btn-primary btn-sm" id="createProjectHeaderBtn" data-admin-only>
+        + Create Project
+      </button>
+    </div>
+  </header>
+
+  <!-- APP CONTAINER -->
+  <div class="app-container">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="nav-label">Core Command</div>
+      <a class="nav-item active" data-view="dashboardView">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+        Executive Dashboard
+      </a>
+      <a class="nav-item" data-view="projectsView">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+        Projects & Workflows
+        <span class="nav-badge" id="sidebarProjectCount">0</span>
+      </a>
+      <a class="nav-item" data-view="myTasksView">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+        My Workstation Tasks
+        <span class="nav-badge alert" id="sidebarMyTaskCount">0</span>
+      </a>
+      <a class="nav-item" data-view="remainingWorkView">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+        Remaining Work / Gaps
+        <span class="nav-badge" id="sidebarRemainingCount">0</span>
+      </a>
+      <a class="nav-item" data-view="pmCommandView" data-admin-only>
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+        PM Command Center
+      </a>
+      
+      <div class="nav-label">Engineering Network</div>
+      <a class="nav-item" data-view="vendorsView">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+        External Contacts & Vendors
+      </a>
+      <a class="nav-item" data-view="raciMatrixView">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+        Responsibility RACI Matrix
+      </a>
+      <a class="nav-item" data-view="blockersHubView">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+        Blockers Management Hub
+        <span class="nav-badge alert" id="sidebarBlockerCount">0</span>
+      </a>
+      <a class="nav-item" data-view="documentVaultView">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+        Cloud Document Vault
+      </a>
+      
+      <div class="nav-label">System & Settings</div>
+      <a class="nav-item" data-view="projectHistoryView">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        Project History & Archiving
+      </a>
+      <a class="nav-item" data-view="adminSettingsView">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/></svg>
+        Team Database
+      </a>
+    </aside>
+
+    <!-- MAIN CANVAS VIEWS -->
+    <main class="main-content">
+
+      <!-- VIEW 1: EXECUTIVE DASHBOARD -->
+      <section id="dashboardView" class="view-panel">
+        <div id="dueRemindersBanner" class="due-banner"></div>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+          <div>
+            <h2>Engineering Command Overview</h2>
+            <p style="color:var(--text-muted); font-size:0.875rem;">Real-time execution metrics across electronics, PCB, 3D mechanical, firmware, and vendors.</p>
+          </div>
+          <button class="btn btn-primary" onclick="UI.openModal('createProjectModal')">+ Create Project</button>
+        </div>
+
+        <!-- KPI SUMMARY CARDS -->
+        <div class="kpi-grid">
+          <div class="kpi-card" style="--kpi-color: var(--primary);">
+            <div class="kpi-title">Active Projects</div>
+            <div class="kpi-value" id="kpiActiveProjects">0</div>
+            <div class="kpi-subtext"><span id="kpiTotalProjects">0</span> Total Projects</div>
+          </div>
+          <div class="kpi-card" style="--kpi-color: var(--accent-cyan);">
+            <div class="kpi-title">Engineering Tasks</div>
+            <div class="kpi-value" id="kpiTotalTasks">0</div>
+            <div class="kpi-subtext"><span id="kpiTasksInProgress">0</span> In Progress</div>
+          </div>
+          <div class="kpi-card" style="--kpi-color: var(--accent-rose);">
+            <div class="kpi-title">Project Blockers</div>
+            <div class="kpi-value" id="kpiBlockers">0</div>
+            <div class="kpi-subtext">Requires immediate resolution</div>
+          </div>
+          <div class="kpi-card" style="--kpi-color: var(--accent-amber);">
+            <div class="kpi-title">External Vendors</div>
+            <div class="kpi-value" id="kpiActiveVendors">0</div>
+            <div class="kpi-subtext"><span id="kpiVendorTasks">0</span> External Tasks Active</div>
+          </div>
+        </div>
+
+        <!-- TEAM WORKLOAD MATRIX -->
+        <div class="card" style="margin-bottom:1.5rem;">
+          <div class="card-header">
+            <div class="card-title">
+              <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+              Xerago Technical Team Workload & Responsibility Distribution
+            </div>
+          </div>
+          <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap:1rem;" id="dashboardTeamWorkloadGrid">
+            <!-- Dynamic team workload cards render here -->
+          </div>
+        </div>
+
+        <!-- RECENT PROJECTS & RECENT ACTIVITY -->
+        <div style="display:grid; grid-template-columns: 2fr 1fr; gap:1.5rem;">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Recent Engineering Projects</div>
+              <a href="#" class="btn btn-secondary btn-sm" onclick="UI.switchView('projectsView')">View All</a>
+            </div>
+            <div class="data-table-container">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Project Name</th>
+                    <th>Type</th>
+                    <th>Manager</th>
+                    <th>Progress</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="dashboardRecentProjectsBody">
+                  <!-- Rendered dynamically -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">System Activity Log</div>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:0.75rem; font-size:0.825rem;" id="dashboardActivityLogList">
+              <!-- Rendered dynamically -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- VIEW 2: PROJECTS & WORKFLOWS -->
+      <section id="projectsView" class="view-panel" style="display:none;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+          <div>
+            <h2>Engineering Projects & Workflow Canvas</h2>
+            <p style="color:var(--text-muted); font-size:0.875rem;">Manage project lifecycles, automated tasks, visual pipelines, and vendor assignments.</p>
+          </div>
+          <button class="btn btn-primary" onclick="UI.openModal('createProjectModal')">+ Create New Project</button>
+        </div>
+
+        <div style="display:flex; gap:1rem; margin-bottom:1rem;">
+          <select class="form-control" style="width:200px;" id="projectTypeFilterSelect">
+            <option value="ALL">All Project Types</option>
+            <option value="PCB">PCB Design</option>
+            <option value="Embedded">Embedded Systems</option>
+            <option value="IoT">IoT Solutions</option>
+            <option value="Mechanical">Mechanical / 3D</option>
+            <option value="Automation">Automation</option>
+          </select>
+          <select class="form-control" style="width:200px;" id="projectStatusFilterSelect">
+            <option value="ALL">All Statuses</option>
+            <option value="In Progress">In Progress</option>
+            <option value="Completed">Completed</option>
+            <option value="Blocked">Blocked</option>
+          </select>
+        </div>
+
+        <!-- PROJECT LIST CARDS -->
+        <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap:1.25rem;" id="projectsGrid">
+          <!-- Rendered dynamically -->
+        </div>
+      </section>
+
+      <!-- VIEW 3: PROJECT CANVAS DETAIL VIEW -->
+      <section id="projectDetailCanvasView" class="view-panel" style="display:none;">
+        <button class="btn btn-secondary btn-sm" style="margin-bottom:1rem;" onclick="UI.switchView('projectsView')">← Back to Projects List</button>
+        
+        <div class="card" style="margin-bottom:1.5rem;" id="projectDetailHeaderCard">
+          <!-- Dynamic Project Header Details -->
+        </div>
+
+        <div class="tabs-bar">
+          <button class="tab-btn active" data-tab="tabPipeline">Visual Stage Pipeline</button>
+          <button class="tab-btn" data-tab="tabKanban">Task Kanban Board</button>
+        </div>
+
+        <div id="tabPipeline" class="tab-content">
+          <p style="color:var(--text-muted);font-size:0.82rem;margin-bottom:0.75rem;">Flowchart of engineering stages — green = done, cyan = in motion, faded = waiting.</p>
+          <div id="projectPipelineContainer"></div>
+        </div>
+
+        <div id="tabKanban" class="tab-content" style="display:none;">
+          <p style="color:var(--text-muted);font-size:0.82rem;margin-bottom:0.75rem;">Tasks by status. Open a card to edit or submit work.</p>
+          <div class="kanban-board" id="projectKanbanBoard"></div>
+        </div>
+
+      </section>
+
+      <!-- VIEW 4: MY WORKSTATION TASKS -->
+      <section id="myTasksView" class="view-panel" style="display:none;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+          <div>
+            <h2>My Workstation Tasks</h2>
+            <p style="color:var(--text-muted); font-size:0.875rem;">Filtered view for active logged-in team member: <strong id="myTasksMemberLabel">Dinesh R.</strong></p>
+          </div>
+        </div>
+
+        <div class="tabs-bar">
+          <button class="tab-btn active" data-mytab="open">Open / Assigned</button>
+          <button class="tab-btn" data-mytab="today">Today & In Progress</button>
+          <button class="tab-btn" data-mytab="high">High Priority / Urgent</button>
+          <button class="tab-btn" data-mytab="blocked">Blocked Tasks</button>
+          <button class="tab-btn" data-mytab="completed">Completed</button>
+          <button class="tab-btn" data-mytab="all">All Mine</button>
+        </div>
+
+        <div class="data-table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Task</th>
+                <th>Project</th>
+                <th>Phase</th>
+                <th>Support Person</th>
+                <th>Vendor Link</th>
+                <th>Status</th>
+                <th>Quick Action</th>
+              </tr>
+            </thead>
+            <tbody id="myTasksTableBody">
+              <!-- Rendered dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- VIEW: REMAINING WORK / GAPS -->
+      <section id="remainingWorkView" class="view-panel" style="display:none;">
+        <div style="margin-bottom:1.5rem;">
+          <h2>Remaining Work &amp; Designation Gaps</h2>
+          <p style="color:var(--text-muted); font-size:0.875rem;">What AI planned vs what is still unfinished — by teammate, designation, and project.</p>
+        </div>
+        <div id="remainingWorkContainer"></div>
+      </section>
+
+      <!-- VIEW 5: PM COMMAND CENTER -->
+      <section id="pmCommandView" class="view-panel" style="display:none;">
+        <div style="margin-bottom:1.5rem;">
+          <h2>Project Manager Command Center</h2>
+          <p style="color:var(--text-muted); font-size:0.875rem;">High-level project health, approval queues, blocker resolution, and external vendor allocations.</p>
+        </div>
+
+        <div class="kpi-grid">
+          <div class="kpi-card" style="--kpi-color: var(--accent-amber);">
+            <div class="kpi-title">Awaiting Your Verification</div>
+            <div class="kpi-value" id="pmKpiPendingApproval">0</div>
+            <div class="kpi-subtext">Submitted work + docs</div>
+          </div>
+          <div class="kpi-card" style="--kpi-color: var(--accent-purple);">
+            <div class="kpi-title">AI Plans to Publish</div>
+            <div class="kpi-value" id="pmKpiPendingPlans">0</div>
+            <div class="kpi-subtext">Draft workflows</div>
+          </div>
+          <div class="kpi-card" style="--kpi-color: var(--accent-rose);">
+            <div class="kpi-title">Critical Path Blockers</div>
+            <div class="kpi-value" id="pmKpiCriticalBlockers">0</div>
+            <div class="kpi-subtext">Active engineering bottlenecks</div>
+          </div>
+          <div class="kpi-card" style="--kpi-color: var(--accent-cyan);">
+            <div class="kpi-title">Vendor Assignments</div>
+            <div class="kpi-value" id="pmKpiVendorAssignments">0</div>
+            <div class="kpi-subtext">External partner tasks</div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-bottom:1.5rem;">
+          <div class="card-header">
+            <div class="card-title">Live team progress</div>
+            <span style="font-size:0.75rem;color:var(--text-dim);" id="pmLivePulse">Listening…</span>
+          </div>
+          <div id="pmLiveProgressFeed" style="display:flex;flex-direction:column;gap:0.5rem;max-height:220px;overflow:auto;"></div>
+        </div>
+
+        <div class="card" style="margin-bottom:1.5rem;">
+          <div class="card-header">
+            <div class="card-title">Submitted work — verify &amp; mark complete</div>
+          </div>
+          <div id="pmVerificationQueue"></div>
+        </div>
+
+        <div class="card" style="margin-bottom:1.5rem;">
+          <div class="card-header">
+            <div class="card-title">AI plans awaiting publish</div>
+          </div>
+          <div id="pmPendingPlansList"></div>
+        </div>
+
+        <div class="card" style="margin-bottom:1.5rem;">
+          <div class="card-header">
+            <div class="card-title">Critical Project Risk & Blocker Matrix</div>
+          </div>
+          <div id="pmBlockerResolutionList">
+            <!-- Critical blockers list -->
+          </div>
+        </div>
+      </section>
+
+      <!-- VIEW 6: EXTERNAL CONTACTS & VENDORS -->
+      <section id="vendorsView" class="view-panel" style="display:none;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+          <div>
+            <h2>External Contacts & Vendor Directory</h2>
+            <p style="color:var(--text-muted); font-size:0.875rem;">Database of PCB manufacturers, designers, component suppliers, 3D fabrication, and guides.</p>
+          </div>
+          <button class="btn btn-primary" data-admin-only onclick="UI.openVendorModal()">+ Add New Contact / Vendor</button>
+        </div>
+
+        <div style="display:flex; gap:1rem; margin-bottom:1.25rem;">
+          <select class="form-control" style="width:220px;" id="vendorCategoryFilterSelect">
+            <option value="ALL">All Categories</option>
+            <option value="PCB Designer">PCB Designer</option>
+            <option value="PCB Manufacturer">PCB Manufacturer</option>
+            <option value="PCB Assembly">PCB Assembly</option>
+            <option value="Electronics Consultant">Electronics Consultant</option>
+            <option value="Component Supplier">Component Supplier</option>
+            <option value="3D / Mechanical Designer">3D / Mechanical Designer</option>
+            <option value="Fabrication">Fabrication</option>
+            <option value="Testing Service">Testing Service</option>
+          </select>
+          <input type="text" class="form-control" style="width:280px;" id="vendorSearchInput" placeholder="Filter by name, company, city, service...">
+        </div>
+
+        <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap:1.25rem;" id="vendorsGrid">
+          <!-- Dynamic Vendor Cards -->
+        </div>
+      </section>
+
+      <!-- VIEW 7: RACI MATRIX GLOBAL VIEW -->
+      <section id="raciMatrixView" class="view-panel" style="display:none;">
+        <div style="margin-bottom:1.5rem;">
+          <h2>Responsibility RACI Matrix</h2>
+          <p style="color:var(--text-muted); font-size:0.875rem;">
+            Single place for RACI across projects (not repeated inside project canvas). Engineering Network → here.
+          </p>
+        </div>
+        <div id="globalRaciMatrixContainer"></div>
+      </section>
+
+      <!-- VIEW 8: BLOCKERS HUB -->
+      <section id="blockersHubView" class="view-panel" style="display:none;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+          <div>
+            <h2>Blockers Management Hub</h2>
+            <p style="color:var(--text-muted); font-size:0.875rem;">
+              Assigned resolver is shown by login account. Only that owner can resolve — with a how-resolved description and optional files.
+            </p>
+          </div>
+          <button class="btn btn-primary" onclick="UI.openModal('addBlockerModal')">+ Report New Blocker</button>
+        </div>
+        <div class="data-table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Issue / Blocker</th>
+                <th>Project</th>
+                <th>Assigned resolver (account)</th>
+                <th>Reported by</th>
+                <th>Priority</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="globalBlockersTableBody">
+              <!-- Dynamic blockers -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- VIEW 9: DOCUMENT VAULT -->
+      <section id="documentVaultView" class="view-panel" style="display:none;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; gap:1rem; flex-wrap:wrap;">
+          <div>
+            <h2>Cloud Document Vault</h2>
+            <p style="color:var(--text-muted); font-size:0.875rem;">
+              Files grouped <strong>by project</strong>. Progress submissions appear here. Admin can share a file with a person or the whole team (email + in-app).
+            </p>
+            <p id="vaultMailStatus" style="font-size:0.75rem;color:var(--text-dim);margin-top:0.35rem;"></p>
+          </div>
+          <button class="btn btn-primary" onclick="UI.openModal('uploadDocumentModal')">+ Upload / Share to Vault</button>
+        </div>
+        <div id="vaultByProjectContainer"></div>
+      </section>
+
+      <!-- VIEW 10: PROJECT HISTORY -->
+      <section id="projectHistoryView" class="view-panel" style="display:none;">
+        <div style="margin-bottom:1.5rem;">
+          <h2>Project Archive &amp; History</h2>
+          <p style="color:var(--text-muted); font-size:0.875rem;">
+            Soft-deleted (archived) projects keep tasks and vault files. Restore to work again, or permanently delete.
+          </p>
+        </div>
+        <div id="projectHistoryContainer"></div>
+      </section>
+
+      <!-- VIEW 11: TEAM DATABASE + WORKFLOW TEMPLATES (no duplicate of Core/Network pages) -->
+      <section id="adminSettingsView" class="view-panel" style="display:none;">
+        <div style="margin-bottom:1.5rem;">
+          <h2>Team Database &amp; Workflow Templates</h2>
+          <p style="color:var(--text-muted); font-size:0.875rem;" id="adminViewSubtitle">
+            Team roster and AI workflow rules live here. Projects, vendors, docs, and blockers stay in Core Command / Engineering Network — not repeated.
+          </p>
+        </div>
+
+        <div class="tabs-bar">
+          <button class="tab-btn active" data-admintab="adminTeam">Xerago Internal Team Database</button>
+          <button class="tab-btn" data-admintab="adminTemplates">Workflow Templates</button>
+          <button class="tab-btn" data-admintab="adminMaintenance">Ops &amp; Maintenance</button>
+        </div>
+
+        <div id="adminTeam" class="admin-tab-content">
+          <div style="display:flex; justify-content:space-between; margin-bottom:1rem; align-items:center; gap:1rem; flex-wrap:wrap;">
+            <div>
+              <h3>Xerago Internal Team Database</h3>
+              <div id="adminTeamStatusSummary" style="font-size:0.8rem;color:var(--text-muted);margin-top:0.25rem;"></div>
+              <p style="font-size:0.78rem;color:var(--text-dim);margin-top:0.35rem;" id="adminTeamEditHint">Admin can Edit / Set Active·Inactive. Members view only.</p>
+            </div>
+            <button class="btn btn-primary btn-sm" data-admin-only onclick="UI.openTeamMemberModal()">+ Add / Edit Team Member</button>
+          </div>
+          <div class="data-table-container">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Designation / Role</th>
+                  <th>Core Skills</th>
+                  <th>Primary Responsibilities</th>
+                  <th>Status</th>
+                  <th>Admin actions</th>
+                </tr>
+              </thead>
+              <tbody id="adminTeamTableBody"></tbody>
+            </table>
+          </div>
+          <div class="card" data-admin-only style="margin-top:1.25rem;max-width:640px;">
+            <h4 style="margin-bottom:0.5rem;">Admin backup (not a duplicate of Cloud Document Vault)</h4>
+            <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:0.75rem;">JSON snapshot of team/projects/tasks — separate from teammate file uploads in Engineering Network → Cloud Document Vault.</p>
+            <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+              <button class="btn btn-primary btn-sm" onclick="XeragoDB.exportSnapshot()">Export JSON</button>
+              <button class="btn btn-secondary btn-sm" style="color:var(--accent-rose);" onclick="XeragoDB.resetToSeed()">Reset seed data</button>
+            </div>
+          </div>
+        </div>
+
+        <div id="adminTemplates" class="admin-tab-content" style="display:none;">
+          <div style="margin-bottom:1rem;">
+            <h3>Organized engineering workflow templates</h3>
+            <p style="color:var(--text-muted); font-size:0.825rem;">
+              These rules feed AI project planning. They are <strong>not</strong> the same as sidebar “Projects &amp; Workflows” (that page lists live projects).
+            </p>
+          </div>
+          <div id="adminWorkflowTemplatesList"></div>
+        </div>
+
+        <div id="adminMaintenance" class="admin-tab-content" style="display:none;">
+          <div style="margin-bottom:1rem;">
+            <h3>Ops &amp; Maintenance</h3>
+            <p style="color:var(--text-muted); font-size:0.825rem;">
+              Live health for the shared command center, plus the backlog that makes long-term IoT project maintenance solid.
+            </p>
+          </div>
+          <div id="adminMaintenanceLive" class="maint-grid" style="margin-bottom:1.25rem;"></div>
+          <h4 style="margin:0 0 0.75rem;font-size:0.9rem;">Roadmap to “perfect” maintenance</h4>
+          <div class="maint-grid" id="adminMaintenanceRoadmap"></div>
+          <div class="card" style="margin-top:1.25rem;">
+            <h4 style="margin:0 0 0.5rem;">Recent activity (audit trail)</h4>
+            <div id="adminMaintenanceActivity" style="max-height:220px;overflow:auto;font-size:0.8rem;"></div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- FOOTER STORAGE METER -->
+  <footer class="app-footer">
+    <div>Xerago IoT Command Center &copy; 2026</div>
+    <div class="storage-meter">
+      <span>Storage Usage:</span>
+      <div class="meter-bar"><div class="meter-fill" id="storageMeterFill"></div></div>
+      <span id="storageMeterText">Vault: calculating…</span>
+    </div>
+  </footer>
+
+  <!-- MODAL DIALOGS -->
+
+  <!-- MODAL 1: CREATE PROJECT -->
+  <div class="modal-overlay" id="createProjectModal">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title">+ Create New Engineering Project</div>
+        <button class="close-btn" onclick="UI.closeModal('createProjectModal')">&times;</button>
+      </div>
+      <form id="createProjectForm">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Project Name *</label>
+            <input type="text" class="form-control" id="projName" required placeholder="e.g. Smart AC Controller">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Project Type *</label>
+            <select class="form-control" id="projType" required>
+              <option value="Embedded">Embedded Systems / IoT</option>
+              <option value="PCB">PCB Design & Layout</option>
+              <option value="Electronics">Electronics Hardware</option>
+              <option value="Mechanical">Mechanical / 3D Design</option>
+              <option value="Automation">Automation & Control</option>
+              <option value="Prototype">Prototype Development</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Project Description & Hardware Specifications *</label>
+          <textarea class="form-control" id="projDesc" required placeholder="Detail the system architecture (e.g., ESP32-based AC controller with IR control, temperature sensing, Wi-Fi dashboard, custom 4-layer PCB, firmware, and 3D enclosure)..."></textarea>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Client / Customer</label>
+            <input type="text" class="form-control" id="projCustomer" placeholder="Internal / Client Name">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Project Manager</label>
+            <select class="form-control" id="projManager"></select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Priority</label>
+            <select class="form-control" id="projPriority">
+              <option value="Medium">Medium</option>
+              <option value="High">High</option>
+              <option value="Critical">Critical</option>
+              <option value="Low">Low</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Target Completion Date</label>
+            <input type="date" class="form-control" id="projTargetDate">
+          </div>
+        </div>
+        <div style="background:var(--primary-light); border:1px solid var(--primary); padding:0.75rem; border-radius:8px; margin-bottom:1rem; font-size:0.8rem; color:var(--text-main);">
+          <strong>AI planner:</strong> Analyzes this project, picks only the people who are needed (not the whole team every time), and proposes unique tasks. <strong>No tasks are created until you confirm.</strong>
+        </div>
+        <div style="display:flex; justify-content:flex-end; gap:0.75rem;">
+          <button type="button" class="btn btn-secondary" onclick="UI.closeModal('createProjectModal')">Cancel</button>
+          <button type="submit" class="btn btn-primary">Generate Project &amp; Assign Tasks</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL 2: ADD / EDIT VENDOR (admin) -->
+  <div class="modal-overlay" id="addVendorModal">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title" id="vendorModalTitle">+ Add New External Contact / Vendor</div>
+        <button class="close-btn" onclick="UI.closeModal('addVendorModal')">&times;</button>
+      </div>
+      <form id="addVendorForm">
+        <input type="hidden" id="vendorId">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Contact Name *</label>
+            <input type="text" class="form-control" id="vendorName" required placeholder="e.g. Shankar">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Company Name</label>
+            <input type="text" class="form-control" id="vendorCompany" placeholder="e.g. Caddline / PCB Express">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Role / Designation</label>
+            <input type="text" class="form-control" id="vendorRole" placeholder="e.g. Senior PCB Designer / Guide">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Primary Category *</label>
+            <select class="form-control" id="vendorCategory" required>
+              <option value="PCB Designer">PCB Designer</option>
+              <option value="PCB Manufacturer">PCB Manufacturer</option>
+              <option value="PCB Assembly">PCB Assembly</option>
+              <option value="Electronics Consultant">Electronics Consultant</option>
+              <option value="Component Supplier">Component Supplier</option>
+              <option value="3D / Mechanical Designer">3D / Mechanical Designer</option>
+              <option value="Fabrication">Fabrication</option>
+              <option value="Testing Service">Testing Service</option>
+              <option value="Embedded/Firmware Consultant">Embedded/Firmware Consultant</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Services Provided (Select all that apply) *</label>
+          <div class="checkbox-grid" id="vendorServicesCheckboxes">
+            <label class="checkbox-item"><input type="checkbox" value="PCB Design"> PCB Design</label>
+            <label class="checkbox-item"><input type="checkbox" value="PCB Manufacturing"> PCB Manufacturing</label>
+            <label class="checkbox-item"><input type="checkbox" value="PCB Assembly"> PCB Assembly</label>
+            <label class="checkbox-item"><input type="checkbox" value="Component Procurement"> Component Procurement</label>
+            <label class="checkbox-item"><input type="checkbox" value="Electronics Consultation"> Electronics Consultation</label>
+            <label class="checkbox-item"><input type="checkbox" value="3D / Mechanical Services"> 3D / Mechanical Services</label>
+            <label class="checkbox-item"><input type="checkbox" value="Fabrication"> Fabrication</label>
+            <label class="checkbox-item"><input type="checkbox" value="Testing Service"> Testing Service</label>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Mobile Number</label>
+            <input type="text" class="form-control" id="vendorMobile" placeholder="+91 9876543210">
+          </div>
+          <div class="form-group">
+            <label class="form-label">WhatsApp Number</label>
+            <input type="text" class="form-control" id="vendorWhatsapp" placeholder="+91 9876543210">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Email Address</label>
+            <input type="email" class="form-control" id="vendorEmail">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Website</label>
+            <input type="text" class="form-control" id="vendorWebsite" placeholder="https://...">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Performance Rating (1 - 5 Stars)</label>
+            <select class="form-control" id="vendorRating">
+              <option value="5">⭐⭐⭐⭐⭐ (5/5) Exceptional</option>
+              <option value="4" selected>⭐⭐⭐⭐ (4/5) Very Good</option>
+              <option value="3">⭐⭐⭐ (3/5) Average</option>
+              <option value="2">⭐⭐ (2/5) Below Expectations</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Status</label>
+            <select class="form-control" id="vendorStatus">
+              <option value="Active">Active</option>
+              <option value="Inactive">Inactive</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Notes & Work History</label>
+          <textarea class="form-control" id="vendorNotes" placeholder="Specialization, turnaround time, pricing notes..."></textarea>
+        </div>
+        <div style="display:flex; justify-content:flex-end; gap:0.75rem;">
+          <button type="button" class="btn btn-secondary" onclick="UI.closeModal('addVendorModal')">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save External Contact</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL 3: TASK DETAIL & VENDOR ASSIGNMENT -->
+  <div class="modal-overlay" id="taskDetailModal">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title" id="taskModalTitle">Task Details</div>
+        <button class="close-btn" onclick="UI.closeModal('taskDetailModal')">&times;</button>
+      </div>
+      <form id="taskDetailForm">
+        <input type="hidden" id="taskModalId">
+        <div class="form-group">
+          <label class="form-label">Task Name</label>
+          <input type="text" class="form-control" id="taskModalName" required>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Status</label>
+            <select class="form-control" id="taskModalStatus">
+              <option value="Draft">Draft (awaiting plan publish)</option>
+              <option value="Assigned">Assigned</option>
+              <option value="Not Started">Not Started</option>
+              <option value="In Progress">In Progress</option>
+              <option value="Waiting">Waiting</option>
+              <option value="Testing">Testing</option>
+              <option value="Submitted">Submitted (awaiting manager)</option>
+              <option value="Completed">Completed (manager verified)</option>
+              <option value="Blocked">Blocked</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Responsible Person (Internal)</label>
+            <select class="form-control" id="taskModalResponsible"></select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Supporting Person (Internal)</label>
+            <select class="form-control" id="taskModalSupport"></select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Scope</label>
+            <select class="form-control" id="taskModalIsExternal" onchange="UI.toggleTaskVendorSection()">
+              <option value="false">Internal Task</option>
+              <option value="true">Requires External Support / Vendor</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- VENDOR RECOMMENDATION PANEL -->
+        <div id="taskVendorSection" style="display:none; background:var(--bg-input); border:1px solid var(--border-color); padding:1rem; border-radius:10px; margin-bottom:1rem;">
+          <h4 style="margin-bottom:0.5rem; color:var(--accent-amber);">Vendor Recommendation Engine</h4>
+          <p style="font-size:0.78rem; color:var(--text-muted); margin-bottom:0.75rem;">Showing active external vendors matched by required service capability:</p>
+          <div id="vendorRecommendationsList" style="display:flex; flex-direction:column; gap:0.5rem; margin-bottom:0.75rem;"></div>
+          <div class="form-group" style="margin-bottom:0;">
+            <label class="form-label">Selected External Vendor</label>
+            <select class="form-control" id="taskModalVendorSelect"></select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Work notes / what you did</label>
+          <textarea class="form-control" id="taskModalNotes" placeholder="Describe progress or deliverables..."></textarea>
+        </div>
+
+        <div class="form-group" id="taskDocUploadSection">
+          <label class="form-label">Attach documents of completed work *</label>
+          <input type="file" class="form-control" id="taskModalFiles" multiple>
+          <p style="font-size:0.75rem;color:var(--text-dim);margin-top:0.35rem;">PDF, images, Gerber ZIP, BOM, screenshots, etc. Required when submitting for manager verification.</p>
+          <div id="taskExistingDocs" style="margin-top:0.5rem;"></div>
+        </div>
+
+        <div id="taskWorkflowActions" style="display:flex; flex-wrap:wrap; justify-content:flex-end; gap:0.75rem; margin-bottom:0.75rem;"></div>
+
+        <div style="display:flex; justify-content:flex-end; gap:0.75rem;">
+          <button type="button" class="btn btn-secondary" onclick="UI.closeModal('taskDetailModal')">Close</button>
+          <button type="submit" class="btn btn-primary" id="taskModalSaveBtn">Save Progress</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: AI PLAN CONFIRMATION (tasks created only after admin confirms) -->
+  <div class="modal-overlay" id="planReviewModal">
+    <div class="modal" style="max-width:920px;">
+      <div class="modal-header">
+        <div class="modal-title">AI project analysis — confirm before creating tasks</div>
+        <button class="close-btn" onclick="UI.closeModal('planReviewModal')">&times;</button>
+      </div>
+      <p style="color:var(--text-muted);font-size:0.85rem;margin-bottom:0.75rem;" id="planReviewSubtitle">
+        AI checks who is actually needed. Uncheck tasks you do not want. Nothing is assigned until you confirm.
+      </p>
+      <div id="planReviewAnalysis" style="background:var(--bg-input);border:1px solid var(--border-color);border-radius:10px;padding:0.85rem;margin-bottom:1rem;"></div>
+      <input type="hidden" id="planReviewProjectId">
+      <div class="data-table-container" style="max-height:380px;overflow:auto;margin-bottom:1rem;">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th style="width:40px;">Use</th>
+              <th>Proposed task (project-specific)</th>
+              <th>Phase</th>
+              <th>Assignee</th>
+              <th>Priority</th>
+            </tr>
+          </thead>
+          <tbody id="planReviewTableBody"></tbody>
+        </table>
+      </div>
+      <div style="display:flex; justify-content:flex-end; gap:0.75rem;">
+        <button type="button" class="btn btn-secondary" onclick="UI.closeModal('planReviewModal')">Review later</button>
+        <button type="button" class="btn btn-primary" id="publishPlanBtn" onclick="UI.publishPlan()">Confirm &amp; create tasks</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 4: ADD BLOCKER -->
+  <div class="modal-overlay" id="addBlockerModal">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title">+ Report Engineering Blocker</div>
+        <button class="close-btn" onclick="UI.closeModal('addBlockerModal')">&times;</button>
+      </div>
+      <form id="addBlockerForm">
+        <div class="form-group">
+          <label class="form-label">Project *</label>
+          <select class="form-control" id="blockerProjectSelect" required></select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Blocker Description *</label>
+          <textarea class="form-control" id="blockerDesc" required placeholder="e.g., Component shortage (ESP32-WROOM-32E out of stock), PCB manufacturer lead time delay..."></textarea>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Owner / Assigned Resolver</label>
+            <select class="form-control" id="blockerOwnerSelect" required></select>
+            <p style="font-size:0.72rem;color:var(--text-dim);margin-top:0.35rem;">Defaults to your login account (name @username).</p>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Priority</label>
+            <select class="form-control" id="blockerPriority">
+              <option value="High">High</option>
+              <option value="Critical">Critical</option>
+              <option value="Medium">Medium</option>
+            </select>
+          </div>
+        </div>
+        <div style="display:flex; justify-content:flex-end; gap:0.75rem;">
+          <button type="button" class="btn btn-secondary" onclick="UI.closeModal('addBlockerModal')">Cancel</button>
+          <button type="submit" class="btn btn-primary">Submit Blocker</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: VIEW BLOCKER RESOLUTION -->
+  <div class="modal-overlay" id="viewResolutionModal">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title">How it was resolved</div>
+        <button class="close-btn" onclick="UI.closeModal('viewResolutionModal')">&times;</button>
+      </div>
+      <div id="viewResolutionBody" style="font-size:0.875rem;line-height:1.5;"></div>
+      <div style="display:flex;justify-content:flex-end;margin-top:1rem;">
+        <button type="button" class="btn btn-secondary" onclick="UI.closeModal('viewResolutionModal')">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: CHANGE PASSWORD (stored in server DB) -->
+  <div class="modal-overlay" id="changePasswordModal">
+    <div class="modal" style="max-width:440px;">
+      <div class="modal-header">
+        <div class="modal-title">Change password</div>
+        <button class="close-btn" id="changePasswordCloseBtn" onclick="UI.closeModal('changePasswordModal')">&times;</button>
+      </div>
+      <p id="changePasswordHint" style="font-size:0.82rem;color:var(--text-muted);margin-bottom:1rem;">
+        Password is saved on the server database (not in browser storage).
+      </p>
+      <form id="changePasswordForm">
+        <div class="form-group">
+          <label class="form-label">Current password</label>
+          <input type="password" class="form-control" id="pwCurrent" required autocomplete="current-password">
+        </div>
+        <div class="form-group">
+          <label class="form-label">New password</label>
+          <input type="password" class="form-control" id="pwNew" required minlength="6" autocomplete="new-password">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Confirm new password</label>
+          <input type="password" class="form-control" id="pwConfirm" required minlength="6" autocomplete="new-password">
+        </div>
+        <div class="login-error" id="changePasswordError"></div>
+        <div style="display:flex;justify-content:flex-end;gap:0.75rem;">
+          <button type="button" class="btn btn-secondary" id="changePasswordCancelBtn" onclick="UI.closeModal('changePasswordModal')">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save to database</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: RESOLVE BLOCKER (owner only) -->
+  <div class="modal-overlay" id="resolveBlockerModal">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title">Resolve blocker</div>
+        <button class="close-btn" onclick="UI.closeModal('resolveBlockerModal')">&times;</button>
+      </div>
+      <form id="resolveBlockerForm">
+        <input type="hidden" id="resolveBlockerId">
+        <p id="resolveBlockerSummary" style="font-size:0.85rem;color:var(--text-muted);margin-bottom:0.75rem;"></p>
+        <p id="resolveBlockerOwnerHint" style="font-size:0.78rem;margin-bottom:1rem;"></p>
+        <div class="form-group">
+          <label class="form-label">How did you resolve it? *</label>
+          <textarea class="form-control" id="resolveBlockerNotes" required rows="4" placeholder="Describe the fix — e.g. ordered ESP32 from alternate vendor, ETA Tuesday; updated BOM Rev B."></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Supporting files (optional)</label>
+          <input type="file" class="form-control" id="resolveBlockerFiles" multiple>
+          <p style="font-size:0.72rem;color:var(--text-dim);margin-top:0.35rem;">PO, photos, revised drawings — saved to Cloud Document Vault under this project.</p>
+        </div>
+        <div style="display:flex; justify-content:flex-end; gap:0.75rem;">
+          <button type="button" class="btn btn-secondary" onclick="UI.closeModal('resolveBlockerModal')">Cancel</button>
+          <button type="submit" class="btn btn-primary">Mark resolved</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL 5: UPLOAD DOCUMENT -->
+  <div class="modal-overlay" id="uploadDocumentModal">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title">Upload to Cloud Document Vault</div>
+        <button class="close-btn" onclick="UI.closeModal('uploadDocumentModal')">&times;</button>
+      </div>
+      <form id="uploadDocumentForm">
+        <div class="form-group">
+          <label class="form-label">Target IoT Project *</label>
+          <select class="form-control" id="docProjectSelect" required></select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Document Title *</label>
+          <input type="text" class="form-control" id="docTitle" required placeholder="e.g. Sensor_Firmware_v1.2.bin / Gateway_Schematic.pdf">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Document Category</label>
+          <select class="form-control" id="docCategory">
+            <option value="Firmware">IoT Firmware / Hex</option>
+            <option value="Schematic">Schematic Diagram</option>
+            <option value="PCB / Gerber">PCB Gerber / Layout</option>
+            <option value="Sensor Spec">Sensor / Module Spec</option>
+            <option value="Cloud Config">Cloud / MQTT Config</option>
+            <option value="BOM">Bill of Materials (BOM)</option>
+            <option value="3D Model">3D STEP / Enclosure</option>
+            <option value="Test Report">Field / Lab Test Report</option>
+            <option value="Artifact">Other Artifact</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Select File *</label>
+          <input type="file" class="form-control" id="docFileInput" required>
+        </div>
+        <div id="docShareAdminFields" data-admin-only>
+          <div class="form-group">
+            <label class="form-label">Share with *</label>
+            <select class="form-control" id="docShareWith">
+              <option value="team">Entire team</option>
+              <option value="project">This project team</option>
+              <option value="users">Specific person(s) ▾</option>
+              <option value="private">Admin only (private)</option>
+            </select>
+          </div>
+          <div class="form-group" id="docShareUsersWrap" style="display:none;">
+            <label class="form-label">Sub-select people</label>
+            <div id="docShareUsersChecks" style="border:1px solid var(--border-color);border-radius:8px;padding:0.5rem;max-height:140px;overflow:auto;"></div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Version</label>
+            <select class="form-control" id="docVersionMode">
+              <option value="auto">Auto (same title → next Rev A/B/C…)</option>
+              <option value="new">Force new document (Rev A)</option>
+              <option value="of">New revision of existing file ▾</option>
+            </select>
+          </div>
+          <div class="form-group" id="docVersionOfWrap" style="display:none;">
+            <label class="form-label">Base document (sub-dropdown)</label>
+            <select class="form-control" id="docVersionOf"></select>
+          </div>
+        </div>
+        <div style="display:flex; justify-content:flex-end; gap:0.75rem;">
+          <button type="button" class="btn btn-secondary" onclick="UI.closeModal('uploadDocumentModal')">Cancel</button>
+          <button type="submit" class="btn btn-primary">Upload to Cloud Vault</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- SHARE DOCUMENT MODAL (dropdown + sub-dropdown) -->
+  <div class="modal-overlay" id="shareDocumentModal">
+    <div class="modal" style="max-width:480px;">
+      <div class="modal-header">
+        <div class="modal-title">Share vault file</div>
+        <button class="close-btn" onclick="UI.closeModal('shareDocumentModal')">&times;</button>
+      </div>
+      <form id="shareDocumentForm">
+        <input type="hidden" id="shareDocId">
+        <p id="shareDocLabel" style="font-size:0.85rem;color:var(--text-muted);margin-bottom:1rem;"></p>
+        <div class="form-group">
+          <label class="form-label">Share with</label>
+          <select class="form-control" id="shareAudienceSelect">
+            <option value="team">Entire team</option>
+            <option value="project">This project team</option>
+            <option value="users">Specific person(s) ▾</option>
+            <option value="private">Admin only (private)</option>
+          </select>
+        </div>
+        <div class="form-group" id="sharePeopleWrap" style="display:none;">
+          <label class="form-label">Select people (sub-menu)</label>
+          <div id="sharePeopleChecks" style="border:1px solid var(--border-color);border-radius:8px;padding:0.5rem;max-height:160px;overflow:auto;"></div>
+        </div>
+        <div style="display:flex; justify-content:flex-end; gap:0.75rem;">
+          <button type="button" class="btn btn-secondary" onclick="UI.closeModal('shareDocumentModal')">Cancel</button>
+          <button type="submit" class="btn btn-primary">Share</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL 6: ADD / EDIT TEAM MEMBER (admin only) -->
+  <div class="modal-overlay" id="addTeamMemberModal">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title" id="tmModalTitle">+ Add Internal Team Member</div>
+        <button class="close-btn" onclick="UI.closeModal('addTeamMemberModal')">&times;</button>
+      </div>
+      <form id="addTeamMemberForm">
+        <input type="hidden" id="tmId">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Full Name *</label>
+            <input type="text" class="form-control" id="tmName" required placeholder="e.g. Ramesh Kumar">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Role / Designation *</label>
+            <input type="text" class="form-control" id="tmRole" required placeholder="e.g. Firmware Engineer">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Username (login)</label>
+            <input type="text" class="form-control" id="tmUsername" placeholder="e.g. ramesh">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email</label>
+            <input type="email" class="form-control" id="tmEmail" placeholder="name@xerago.com">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Access level</label>
+            <select class="form-control" id="tmAccessLevel">
+              <option value="member">Member (view + own tasks only)</option>
+              <option value="admin">Admin (edit everything)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Status</label>
+            <select class="form-control" id="tmStatus">
+              <option value="Active">Active</option>
+              <option value="Inactive">Inactive</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password (optional on edit — leave blank to keep)</label>
+          <input type="password" class="form-control" id="tmPassword" placeholder="Default for new: team123">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Core Skills (comma separated)</label>
+          <input type="text" class="form-control" id="tmSkills" placeholder="e.g. Embedded C, ESP-IDF, RTOS, BLE">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Primary Responsibilities</label>
+          <textarea class="form-control" id="tmResponsibilities" placeholder="Firmware architecture, sensor drivers..."></textarea>
+        </div>
+        <div style="display:flex; justify-content:flex-end; gap:0.75rem;">
+          <button type="button" class="btn btn-secondary" onclick="UI.closeModal('addTeamMemberModal')">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Team Member</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/client.js"></script>
+</body>
+</html>

@@ -1,0 +1,25 @@
+{
+  "name": "xerago-engineering-dashboard",
+  "version": "2.0.0",
+  "description": "Open-source Xerago Engineering PM — Express + SQLite-style JSON DB + JWT + Socket.io + Ollama AI",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "node --watch server/index.js",
+    "pm2:start": "npx pm2 start server/index.js --name xerago-iot",
+    "pm2:stop": "npx pm2 stop xerago-iot",
+    "pm2:logs": "npx pm2 logs xerago-iot"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2",
+    "nodemailer": "^10.6.1",
+    "socket.io": "^4.8.1"
+  }
+}
