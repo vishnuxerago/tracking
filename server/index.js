@@ -438,7 +438,7 @@ app.post('/api/projects/:id/regenerate-tasks', auth, requireAdmin, async (req, r
 });
 
 /** Manager confirms AI proposal → NOW create & assign real tasks */
-app.post('/api/projects/:id/publish-plan', auth, requireAdmin, (req, res) => {
+app.post('/api/projects/:id/publish-plan', auth, requireAdmin, async (req, res) => {
   const proj = db.get('projects', req.params.id);
   if (!proj) return res.status(404).json({ error: 'Project not found' });
 
@@ -494,11 +494,20 @@ app.post('/api/projects/:id/publish-plan', auth, requireAdmin, (req, res) => {
     reason: 'plan_published',
     projectId: proj.id
   });
-  // Email each assignee (SMTP if configured, else console)
-  emailAssignees(req.user.name, proj.name, published).catch((err) =>
-    console.error('[mail] plan publish', err.message)
-  );
-  res.json({ project: updatedProj, tasks: published, mail: mailer.status() });
+  // Email each assignee with FULL task list for that person (SMTP if configured)
+  let mailResults = [];
+  try {
+    mailResults = await emailAssignees(req.user.name, proj.name, published);
+  } catch (err) {
+    console.error('[mail] plan publish', err.message);
+    mailResults = [{ ok: false, error: err.message }];
+  }
+  res.json({
+    project: updatedProj,
+    tasks: published,
+    mail: mailer.status(),
+    mailResults
+  });
 });
 
 app.patch('/api/projects/:id', auth, requireAdmin, (req, res) => {
