@@ -74,24 +74,55 @@ Click **Password** in the header (or you are prompted on first login). The new p
 |-------|-----|
 | **Your PC (dev)** | `npm start` — stops when you close the terminal |
 | **Your PC (always on)** | `npm run pm2:start` (PM2) — restarts if it crashes; machine must stay on |
-| **Cloud (recommended)** | **Render** or **Railway** — always online, free/cheap tier |
+| **Cloud (free forever)** | **Oracle Cloud Always Free** VM — see below |
 
-## Where to host (Netlify / Vercel / other)
+## Host on Oracle Cloud Always Free (recommended)
 
-This app is a **Node.js + Express + Socket.io** server with a disk vault and JSON DB.
+Closest option to **set-and-forget free forever** for Express + Socket.io + disk vault.
+
+### 1. Create the free VM (Oracle Console)
+
+1. Sign up: [cloud.oracle.com](https://cloud.oracle.com) (Always Free)
+2. **Compute → Instances → Create instance**
+   - Image: **Canonical Ubuntu 22.04**
+   - Shape: **VM.Standard.A1.Flex** (Ampere) — 1–2 OCPU, 6–12 GB RAM (Always Free)
+   - Add your SSH public key
+3. **Networking → VCN → Security List → Ingress rules** — allow:
+   - TCP **22** (SSH)
+   - TCP **80** (HTTP)
+   - TCP **443** (HTTPS, optional later)
+4. Note the instance **Public IP**
+
+### 2. Deploy the app (SSH into the VM)
+
+```bash
+ssh ubuntu@YOUR_PUBLIC_IP
+# If Oracle image uses opc:  ssh opc@YOUR_PUBLIC_IP
+
+git clone https://github.com/vishnuxerago/tracking.git ~/xerago-engineering-dashboard
+cd ~/xerago-engineering-dashboard
+bash deploy/oracle/setup.sh
+```
+
+Open **http://YOUR_PUBLIC_IP**
+
+PM2 keeps the process up across reboots. Nginx proxies port 80 → app `3847` (incl. Socket.io). Vault/DB stay on the VM disk under `data/`.
+
+```bash
+pm2 logs xerago-iot
+nano ~/xerago-engineering-dashboard/.env   # SMTP, APP_URL, JWT_SECRET
+pm2 restart xerago-iot --update-env
+```
+
+## Where else to host
 
 | Platform | Can host this app? |
 |----------|--------------------|
-| **Netlify** | **No** — static / serverless only; no long-running Express or Socket.io |
-| **Vercel** | **No** (same reason) — not for always-on Node + WebSockets + file vault |
-| **Render** | **Yes** — best simple choice (Web Service + disk) |
-| **Railway** | **Yes** |
-| **Fly.io** | **Yes** |
-| **VPS / company server** | **Yes** — `npm start` or PM2 |
+| **Oracle Always Free** | **Yes** — best free forever fit |
+| **Netlify / Vercel** | **No** — no long-running Express / Socket.io / disk vault |
+| **Render / Railway / Fly** | **Yes** — easy, but free tiers sleep or use credits |
 
-**Recommended:** push to GitHub → create a **Render Web Service** from this repo → set env vars → add a **persistent disk** mounted at `/opt/render/project/src/data` (or project `data/`).
-
-Env vars to set on the host: `JWT_SECRET`, `PORT`, `APP_URL`, `SMTP_*` (optional), `VAULT_MAX_MB` (optional).
+Env vars: `JWT_SECRET`, `PORT`, `APP_URL`, `SMTP_*` (optional), `VAULT_MAX_MB` (optional).
 
 `.gitignore` already excludes `node_modules/`, `data/`, and `.env`.
 

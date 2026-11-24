@@ -8,7 +8,7 @@
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&family=Orbitron:wght@600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   
   <style>
     /* CSS DESIGN SYSTEM & TOKENS */
@@ -93,29 +93,33 @@
     .brand-logo {
       width: 42px;
       height: 42px;
-      background: linear-gradient(145deg, #249e5e 0%, #0d9488 55%, #0891b2 100%);
+      background: #ffffff;
+      border: 1px solid var(--border-color);
       border-radius: 12px;
       display: flex;
       align-items: center;
       justify-content: center;
-      color: white;
-      font-family: 'Outfit', sans-serif;
-      font-weight: 800;
-      font-size: 0.95rem;
-      letter-spacing: -0.02em;
-      box-shadow: 0 0 0 3px var(--brand-green-muted), 0 8px 20px rgba(8, 145, 178, 0.25);
+      box-shadow: 0 0 0 3px var(--brand-green-muted), var(--shadow-sm);
       position: relative;
+      overflow: hidden;
+      padding: 3px;
     }
-    .brand-logo::after {
-      content: '';
-      position: absolute;
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: #67e8f9;
-      top: 7px;
-      right: 7px;
-      box-shadow: 0 0 8px #67e8f9;
+    .brand-logo svg,
+    .brand-logo img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: contain;
+    }
+    .brand-logo .wifi-arc {
+      transform-origin: 24px 30px;
+      animation: wifiPulse 2.4s ease-in-out infinite;
+    }
+    .brand-logo .wifi-arc.a2 { animation-delay: 0.35s; }
+    .brand-logo .wifi-arc.a3 { animation-delay: 0.7s; }
+    @keyframes wifiPulse {
+      0%, 100% { opacity: 0.35; }
+      50% { opacity: 1; }
     }
     
     .brand-title {
@@ -996,10 +1000,42 @@
       text-align: center;
     }
     .login-card .brand-logo {
-      margin: 0 auto 1.25rem;
-      background: var(--brand-green);
+      width: 72px;
+      height: 72px;
+      margin: 0 auto 1rem;
+      border-radius: 18px;
+      padding: 6px;
+      border: 1px solid #e8e8e8;
+      box-shadow: 0 0 0 4px var(--brand-green-muted);
     }
-    .login-card h1 { font-size: 1.75rem; margin-bottom: 0.35rem; color: #1a1a1a; text-align: center; }
+    .login-card h1 {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 0.55rem 0.65rem;
+      margin-bottom: 0.35rem;
+      text-align: center;
+      line-height: 1;
+    }
+    .login-card h1 .xerago-wordmark {
+      height: 34px;
+      width: auto;
+      max-width: min(240px, 68vw);
+      display: block;
+      object-fit: contain;
+    }
+    .login-card h1 .brand-accent {
+      display: inline-flex;
+      align-items: center;
+      vertical-align: middle;
+      height: 34px;
+    }
+    .login-card h1 .brand-accent svg {
+      height: 34px;
+      width: auto;
+      display: block;
+    }
     .login-card .subtitle { color: #828282; font-size: 0.95rem; margin-bottom: 1.5rem; text-align: center; }
     .login-card .form-label { color: #4f4f4f; text-align: left; display: block; }
     .login-card .form-control {
@@ -1016,6 +1052,12 @@
       background: var(--brand-green);
       border-color: var(--brand-green);
       width: 100%;
+      min-height: 48px;
+      padding: 0.85rem 1.25rem;
+      font-size: 1rem;
+      border-radius: 10px;
+      justify-content: center;
+      box-shadow: 0 4px 14px rgba(36, 158, 94, 0.28);
     }
     .login-card .btn-primary:hover { background: var(--brand-green-hover); }
     .login-error { color: var(--accent-rose); font-size: 0.85rem; min-height: 1.2em; margin-bottom: 0.75rem; }
@@ -1059,8 +1101,48 @@
   <!-- LOGIN OVERLAY -->
   <div id="loginOverlay" class="active">
     <div class="login-card">
-      <div class="brand-logo" style="margin:0 auto 1.25rem;">IoT</div>
-      <h1>Xerago IoT</h1>
+      <div class="brand-logo" aria-hidden="true" title="Xerago IoT">
+        <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" fill="none">
+          <!-- Circuit board frame / wires -->
+          <path d="M6 14V10h4M42 14V10h-4M6 34v4h4M42 34v4h-4" stroke="#94a3b8" stroke-width="1.4" stroke-linecap="round"/>
+          <path d="M10 10h6M32 10h6M10 38h6M32 38h6" stroke="#249e5e" stroke-width="1.3" stroke-linecap="round"/>
+          <circle cx="6" cy="10" r="1.3" fill="#249e5e"/>
+          <circle cx="42" cy="10" r="1.3" fill="#94a3b8"/>
+          <circle cx="6" cy="38" r="1.3" fill="#94a3b8"/>
+          <circle cx="42" cy="38" r="1.3" fill="#249e5e"/>
+          <path d="M8 24H14M34 24h6" stroke="#94a3b8" stroke-width="1.2" stroke-linecap="round"/>
+          <path d="M14 24v-4h4M34 24v4h-4" stroke="#249e5e" stroke-width="1.2" stroke-linecap="round"/>
+          <!-- WiFi arcs -->
+          <path class="wifi-arc a3" d="M12.5 18c6.4-6 16.6-6 23 0" stroke="#249e5e" stroke-width="2.2" stroke-linecap="round"/>
+          <path class="wifi-arc a2" d="M16 22.5c4.5-4 11.5-4 16 0" stroke="#249e5e" stroke-width="2.2" stroke-linecap="round"/>
+          <path class="wifi-arc" d="M19.5 27c2.5-2.2 6.5-2.2 9 0" stroke="#249e5e" stroke-width="2.2" stroke-linecap="round"/>
+          <!-- Chip / node -->
+          <rect x="20" y="30.5" width="8" height="7" rx="1.2" fill="#249e5e"/>
+          <path d="M22 30.5V28.2M24 30.5V27.5M26 30.5V28.2" stroke="#249e5e" stroke-width="1.3" stroke-linecap="round"/>
+          <circle cx="24" cy="34" r="1.35" fill="#fff"/>
+        </svg>
+      </div>
+      <h1>
+        <img class="xerago-wordmark" src="/assets/xerago-logo.png" alt="Xerago">
+        <span class="brand-accent" aria-label="IoT">
+          <svg viewBox="0 0 86 34" xmlns="http://www.w3.org/2000/svg" role="img">
+            <!-- Wire leads -->
+            <path d="M2 17H10M76 17h8" stroke="#94a3b8" stroke-width="1.6" stroke-linecap="round"/>
+            <circle cx="2" cy="17" r="1.6" fill="#249e5e"/>
+            <circle cx="84" cy="17" r="1.6" fill="#249e5e"/>
+            <path d="M10 17V8h4M76 17V26h-4" stroke="#94a3b8" stroke-width="1.4" stroke-linecap="round"/>
+            <circle cx="14" cy="8" r="1.3" fill="#94a3b8"/>
+            <circle cx="72" cy="26" r="1.3" fill="#94a3b8"/>
+            <!-- IoT wordmark matching Xerago green -->
+            <text x="43" y="23" text-anchor="middle" fill="#249e5e" font-family="Orbitron, sans-serif" font-size="18" font-weight="800" letter-spacing="3">IoT</text>
+            <!-- Tiny circuit underlines -->
+            <path d="M22 28h8M36 28h6M48 28h8M62 28h4" stroke="#249e5e" stroke-width="1.5" stroke-linecap="round"/>
+            <circle cx="30" cy="28" r="1.1" fill="#94a3b8"/>
+            <circle cx="42" cy="28" r="1.1" fill="#249e5e"/>
+            <circle cx="56" cy="28" r="1.1" fill="#94a3b8"/>
+          </svg>
+        </span>
+      </h1>
       <p class="subtitle">Sign in to continue</p>
       <form id="loginForm" method="post" action="#" onsubmit="return false;">
         <div class="form-group">
@@ -1072,7 +1154,7 @@
           <input class="form-control" type="password" id="loginPassword" name="password" required autocomplete="current-password" placeholder="Password">
         </div>
         <div class="login-error" id="loginError"></div>
-        <button type="submit" class="btn btn-primary" style="width:100%;">Sign in</button>
+        <button type="submit" class="btn btn-primary">Sign in</button>
       </form>
     </div>
   </div>
@@ -1080,10 +1162,34 @@
   <!-- HEADER -->
   <header class="app-header">
     <div class="brand-section">
-      <div class="brand-logo" title="Xerago IoT">IoT</div>
+      <div class="brand-logo" title="Xerago IoT" aria-hidden="true">
+        <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" fill="none">
+          <path d="M6 14V10h4M42 14V10h-4M6 34v4h4M42 34v4h-4" stroke="#94a3b8" stroke-width="1.4" stroke-linecap="round"/>
+          <path d="M10 10h6M32 10h6M10 38h6M32 38h6" stroke="#249e5e" stroke-width="1.3" stroke-linecap="round"/>
+          <circle cx="6" cy="10" r="1.3" fill="#249e5e"/>
+          <circle cx="42" cy="10" r="1.3" fill="#94a3b8"/>
+          <circle cx="6" cy="38" r="1.3" fill="#94a3b8"/>
+          <circle cx="42" cy="38" r="1.3" fill="#249e5e"/>
+          <path d="M8 24H14M34 24h6" stroke="#94a3b8" stroke-width="1.2" stroke-linecap="round"/>
+          <path d="M14 24v-4h4M34 24v4h-4" stroke="#249e5e" stroke-width="1.2" stroke-linecap="round"/>
+          <path class="wifi-arc a3" d="M12.5 18c6.4-6 16.6-6 23 0" stroke="#249e5e" stroke-width="2.2" stroke-linecap="round"/>
+          <path class="wifi-arc a2" d="M16 22.5c4.5-4 11.5-4 16 0" stroke="#249e5e" stroke-width="2.2" stroke-linecap="round"/>
+          <path class="wifi-arc" d="M19.5 27c2.5-2.2 6.5-2.2 9 0" stroke="#249e5e" stroke-width="2.2" stroke-linecap="round"/>
+          <rect x="20" y="30.5" width="8" height="7" rx="1.2" fill="#249e5e"/>
+          <path d="M22 30.5V28.2M24 30.5V27.5M26 30.5V28.2" stroke="#249e5e" stroke-width="1.3" stroke-linecap="round"/>
+          <circle cx="24" cy="34" r="1.35" fill="#fff"/>
+        </svg>
+      </div>
       <div>
         <div class="brand-title">
-          Xerago IoT
+          <img src="/assets/xerago-logo.png" alt="Xerago" style="height:22px;width:auto;display:block;">
+          <svg viewBox="0 0 86 34" height="20" aria-label="IoT" style="display:block;">
+            <path d="M2 17H10M76 17h8" stroke="#94a3b8" stroke-width="1.6" stroke-linecap="round"/>
+            <circle cx="2" cy="17" r="1.6" fill="#249e5e"/>
+            <circle cx="84" cy="17" r="1.6" fill="#249e5e"/>
+            <text x="43" y="23" text-anchor="middle" fill="#249e5e" font-family="Orbitron, sans-serif" font-size="18" font-weight="800" letter-spacing="3">IoT</text>
+            <path d="M22 28h8M36 28h6M48 28h8M62 28h4" stroke="#249e5e" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
           <span class="brand-tag" id="accessLevelBadge">TEAM</span>
         </div>
       </div>

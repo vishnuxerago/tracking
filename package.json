@@ -6,9 +6,10 @@
   "scripts": {
     "start": "node server/index.js",
     "dev": "node --watch server/index.js",
-    "pm2:start": "npx pm2 start server/index.js --name xerago-iot",
+    "pm2:start": "npx pm2 start ecosystem.config.cjs",
     "pm2:stop": "npx pm2 stop xerago-iot",
-    "pm2:logs": "npx pm2 logs xerago-iot"
+    "pm2:logs": "npx pm2 logs xerago-iot",
+    "pm2:restart": "npx pm2 restart xerago-iot --update-env"
   },
   "engines": {
     "node": ">=18"

@@ -1579,10 +1579,10 @@ io.on('connection', (socket) => {
   });
 });
 
-server.listen(PORT, () => {
+server.listen(PORT, '0.0.0.0', () => {
   const mail = mailer.status();
   console.log(`\n  Xerago IoT Command Center`);
-  console.log(`  → http://localhost:${PORT}`);
+  console.log(`  → http://0.0.0.0:${PORT}`);
   console.log(`  Admin:  dinesh / admin123`);
   console.log(`  Team:   vishnu|arun|daniel / team123`);
   console.log(`  Vault:  data/cloud-vault`);
