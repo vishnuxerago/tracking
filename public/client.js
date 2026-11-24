@@ -264,14 +264,6 @@
         }
       });
 
-      document.querySelectorAll('[data-quick-login]').forEach((btn) => {
-        btn.addEventListener('click', () => {
-          document.getElementById('loginUsername').value = btn.getAttribute('data-user');
-          document.getElementById('loginPassword').value = btn.getAttribute('data-pass');
-          // Auto sign-in on quick-login chip
-          form.requestSubmit();
-        });
-      });
     }
 
     function setupNavigation() {
